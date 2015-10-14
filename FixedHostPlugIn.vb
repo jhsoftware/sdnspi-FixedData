@@ -35,7 +35,7 @@ Public Class FixedHostPlugIn
     With GetPlugInTypeInfo
       .Name = "Fixed Host Name"
       .Description = "Returns a fixed host name"
-      .InfoURL = "http://www.simpledns.com/kb.aspx?kbid=1263"
+      .InfoURL = "http://www.simpledns.com/plugin-fixedhostname"
       .ConfigFile = False
       .MultiThreaded = True
     End With

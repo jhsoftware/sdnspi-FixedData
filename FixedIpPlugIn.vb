@@ -42,7 +42,7 @@ Public Class FixedIpPlugIn
     With GetPlugInTypeInfo
       .Name = "Fixed IP Address"
       .Description = "Returns a fixed IP address"
-      .InfoURL = "http://www.simpledns.com/kb.aspx?kbid=1261"
+      .InfoURL = "http://www.simpledns.com/plugin-fixedip"
       .ConfigFile = False
       .MultiThreaded = True
     End With
