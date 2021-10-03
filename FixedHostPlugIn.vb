@@ -61,13 +61,15 @@ Public Class FixedHostPlugIn
       Dim rv As New DNSAnswer
       rv.RecordsAnswer.Add(rec)
       Return Task.FromResult(rv)
-    Else
+    ElseIf (cfg.MX AndAlso request.QType = DNSRecType.MX) OrElse
+           (cfg.NS AndAlso request.QType = DNSRecType.NS) OrElse
+           (cfg.PTR AndAlso request.QType = DNSRecType.PTR) Then
       Dim rec As New DNSRecord With {
         .Name = request.QName,
         .RRType = request.QType,
         .TTL = cfg.TTL
       }
-      If request.QType = 15US Then
+      If request.QType = DNSRecType.MX Then
         'MX
         rec.Data = "10 " & cfg.HostName
       Else
@@ -77,6 +79,8 @@ Public Class FixedHostPlugIn
       Dim rv As New DNSAnswer
       rv.RecordsAnswer.Add(rec)
       Return Task.FromResult(rv)
+    Else
+      Return Task.FromResult(Of DNSAnswer)(Nothing)
     End If
   End Function
 

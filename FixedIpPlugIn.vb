@@ -50,7 +50,12 @@ Public Class FixedIpPlugIn
   End Function
 
   Public Function Lookup(req As IDNSRequest) As Task(Of IGetHostPlugIn.Result(Of SdnsIP)) Implements IGetHostPlugIn.Lookup
-    Return Task.FromResult(New IGetHostPlugIn.Result(Of SdnsIP) With {.Value = If(req.QType = DNSRecType.A, cfg.IPv4, cfg.IPv6), .TTL = cfg.TTL})
+    If req.QType = DNSRecType.A AndAlso cfg.IPv4 IsNot Nothing Then
+      Return Task.FromResult(New IGetHostPlugIn.Result(Of SdnsIP) With {.Value = cfg.IPv4, .TTL = cfg.TTL})
+    ElseIf req.QType = DNSRecType.AAAA AndAlso cfg.IPv6 IsNot Nothing Then
+      Return Task.FromResult(New IGetHostPlugIn.Result(Of SdnsIP) With {.Value = cfg.IPv6, .TTL = cfg.TTL})
+    End If
+    Return Task.FromResult(Of IGetHostPlugIn.Result(Of SdnsIP))(Nothing)
   End Function
 
   Public Function GetOptionsUI(instanceID As Guid, dataPath As String) As JHSoftware.SimpleDNS.Plugin.OptionsUI Implements JHSoftware.SimpleDNS.Plugin.IPlugInBase.GetOptionsUI
