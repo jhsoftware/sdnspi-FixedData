@@ -150,7 +150,7 @@ Partial Class FixedHostUI
   End Sub
   Friend WithEvents Label1 As System.Windows.Forms.Label
   Friend WithEvents Label3 As System.Windows.Forms.Label
-  Friend WithEvents ttl1 As ctlTTL
+  Friend WithEvents ttl1 As JHSoftware.SimpleDNS.ctlTTL
   Friend WithEvents radCNAME As System.Windows.Forms.RadioButton
   Friend WithEvents chkMX As System.Windows.Forms.CheckBox
   Friend WithEvents chkPTR As System.Windows.Forms.CheckBox

@@ -1,16 +1,16 @@
-﻿Imports JHSoftware.SimpleDNS.Plugin
+﻿Imports JHSoftware.SimpleDNS
 
 Friend Class MyConfigIP
 
-  Friend IPv4 As IPAddressV4
-  Friend IPv6 As IPAddressV6
+  Friend IPv4 As SdnsIPv4
+  Friend IPv6 As SdnsIPv6
   Friend TTL As Integer
 
   Shared Function Load(ByVal config As String) As MyConfigIP
     Dim rv As New MyConfigIP
     Dim sa = config.Split("|"c)
-    rv.IPv4 = If(sa(1) = "-", Nothing, IPAddressV4.Parse(sa(1)))
-    rv.IPv6 = If(sa(2) = "-", Nothing, IPAddressV6.Parse(sa(2)))
+    rv.IPv4 = If(sa(1) = "-", Nothing, SdnsIPv4.Parse(sa(1)))
+    rv.IPv6 = If(sa(2) = "-", Nothing, SdnsIPv6.Parse(sa(2)))
     rv.TTL = Integer.Parse(sa(3))
     Return rv
   End Function
@@ -34,13 +34,14 @@ Friend Class MyConfigHost
 
   Shared Function Load(ByVal config As String) As MyConfigHost
     Dim sa = PipeDecode(config)
-    Dim rv As New MyConfigHost
-    rv.HostName = sa(1)
-    rv.CNAME = (sa(2) = "Y")
-    rv.MX = (sa(3) = "Y")
-    rv.NS = (sa(4) = "Y")
-    rv.PTR = (sa(5) = "Y")
-    rv.TTL = Integer.Parse(sa(6))
+    Dim rv As New MyConfigHost With {
+      .HostName = sa(1),
+      .CNAME = (sa(2) = "Y"),
+      .MX = (sa(3) = "Y"),
+      .NS = (sa(4) = "Y"),
+      .PTR = (sa(5) = "Y"),
+      .TTL = Integer.Parse(sa(6))
+    }
     Return rv
   End Function
 

@@ -12,7 +12,7 @@
     <AssemblyName>FixedDataPlugIn</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Windows</MyType>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <OptionExplicit>On</OptionExplicit>
     <OptionCompare>Binary</OptionCompare>
     <OptionStrict>Off</OptionStrict>
@@ -37,6 +37,7 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -48,6 +49,7 @@
     </DocumentationFile>
     <DefineConstants>_MYFORMS=True</DefineConstants>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -59,20 +61,20 @@
     </DocumentationFile>
     <DefineConstants>_MYFORMS=True</DefineConstants>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022,42353,42354,42355</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="sdnsplugin, Version=5.2.0.0, Culture=neutral, PublicKeyToken=3eacd9f3dbc38099, processorArchitecture=MSIL">
+    <Reference Include="sdnscommon, Version=9.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\sdnsplugin.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\private\sdns\sdnscommon\bin\Release\sdnscommon.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Import Include="JHSoftware.SimpleDNS" />
     <Import Include="Microsoft.VisualBasic" />
     <Import Include="System" />
     <Import Include="System.Collections" />
@@ -83,26 +85,19 @@
     <Import Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ctlTTL.Designer.vb">
-      <DependentUpon>ctlTTL.vb</DependentUpon>
-</Compile>
-    <Compile Include="ctlTTL.vb">
-      <SubType>UserControl</SubType>
-    </Compile>
-
     <Compile Include="FixedHostUI.Designer.vb">
       <DependentUpon>FixedHostUI.vb</DependentUpon>
     </Compile>
     <Compile Include="FixedHostUI.vb">
       <SubType>UserControl</SubType>
     </Compile>
-
     <Compile Include="FixedHostPlugIn.vb" />
     <Compile Include="FixedIpPlugIn.vb" />
     <Compile Include="modPipeEncoder.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
       <DependentUpon>Application.myapp</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Resources.Designer.vb">
@@ -124,10 +119,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ctlTTL.resx" >
-      <DependentUpon>ctlTTL.vb</DependentUpon>
-    </EmbeddedResource>
-
     <EmbeddedResource Include="FixedHostUI.resx">
       <DependentUpon>FixedHostUI.vb</DependentUpon>
     </EmbeddedResource>

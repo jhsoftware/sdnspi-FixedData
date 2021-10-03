@@ -1,20 +1,8 @@
-﻿Imports JHSoftware.SimpleDNS.Plugin
+﻿Imports JHSoftware.SimpleDNS
 
 Public Class FixedIPUI
 
-  Private txtIPv4 As Control
-  Private txtIPv6 As Control
-
   Public Overrides Sub LoadData(ByVal config As String)
-    txtIPv4 = GetIPCtrl(True, False)
-    Me.Controls.Add(txtIPv4)
-    txtIPv4.Location = txtDummy1.Location
-    txtIPv4.TabIndex = txtDummy1.TabIndex
-    txtIPv6 = GetIPCtrl(False, True)
-    Me.Controls.Add(txtIPv6)
-    txtIPv6.Location = txtDummy2.Location
-    txtIPv6.TabIndex = txtDummy2.TabIndex
-
     If config Is Nothing Then Exit Sub 'new instance
 
     Dim cfg = MyConfigIP.Load(config)
@@ -24,17 +12,17 @@ Public Class FixedIPUI
   End Sub
 
   Public Overrides Function ValidateData() As Boolean
-    Dim ip As IPAddress = Nothing
+    Dim ip As SdnsIP = Nothing
     If txtIPv4.Text.Trim.Length > 0 Then
-      If Not IPAddress.TryParse(txtIPv4.Text.Trim, ip) OrElse _
-         ip.IPVersion <> 4 Then
+      If Not SdnsIP.TryParse(txtIPv4.Text.Trim, ip) OrElse
+       Not ip.IsIPv4 Then
         MessageBox.Show("Invalid IPv4 address", "Fixed IP Address", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Return False
       End If
     End If
     If txtIPv6.Text.Trim.Length > 0 Then
-      If Not IPAddress.TryParse(txtIPv6.Text.Trim, ip) OrElse _
-         ip.IPVersion <> 6 Then
+      If Not SdnsIP.TryParse(txtIPv6.Text.Trim, ip) OrElse
+        Not ip.IsIPv6 Then
         MessageBox.Show("Invalid IPv6 address", "Fixed IP Address", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Return False
       End If
@@ -48,8 +36,8 @@ Public Class FixedIPUI
 
   Public Overrides Function SaveData() As String
     Dim rv As New MyConfigIP
-    If txtIPv4.Text.Trim.Length > 0 Then rv.IPv4 = IPAddressV4.Parse(txtIPv4.Text.Trim)
-    If txtIPv6.Text.Trim.Length > 0 Then rv.IPv6 = IPAddressV6.Parse(txtIPv6.Text.Trim)
+    If txtIPv4.Text.Trim.Length > 0 Then rv.IPv4 = SdnsIPv4.Parse(txtIPv4.Text.Trim)
+    If txtIPv6.Text.Trim.Length > 0 Then rv.IPv6 = SdnsIPv6.Parse(txtIPv6.Text.Trim)
     rv.TTL = ttl1.Value
     Return rv.Save()
   End Function

@@ -20,8 +20,8 @@ Public Class FixedHostUI
       Return False
     End If
 
-    Dim hn As JHSoftware.SimpleDNS.Plugin.DomainName
-    If Not JHSoftware.SimpleDNS.Plugin.DomainName.TryParse(txtHost.Text.Trim, hn) Then
+    Dim hn As JHSoftware.SimpleDNS.DomName
+    If Not JHSoftware.SimpleDNS.DomName.TryParse(txtHost.Text.Trim, hn) Then
       MessageBox.Show("Invalid host name", "Fixed Host Name", MessageBoxButtons.OK, MessageBoxIcon.Error)
       Return False
     End If
@@ -38,13 +38,14 @@ Public Class FixedHostUI
   End Function
 
   Public Overrides Function SaveData() As String
-    Dim rv As New MyConfigHost
-    rv.HostName = txtHost.Text.Trim
-    rv.CNAME = radCNAME.Checked
-    rv.MX = chkMX.Checked
-    rv.NS = chkNS.Checked
-    rv.PTR = chkPTR.Checked
-    rv.TTL = ttl1.Value
+    Dim rv As New MyConfigHost With {
+      .HostName = txtHost.Text.Trim,
+      .CNAME = radCNAME.Checked,
+      .MX = chkMX.Checked,
+      .NS = chkNS.Checked,
+      .PTR = chkPTR.Checked,
+      .TTL = ttl1.Value
+    }
     Return rv.Save()
   End Function
 

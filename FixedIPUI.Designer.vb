@@ -19,12 +19,12 @@ Partial Class FixedIPUI
   'Do not modify it using the code editor.
   <System.Diagnostics.DebuggerStepThrough()> _
   Private Sub InitializeComponent()
-    Me.Label1 = New System.Windows.Forms.Label
-    Me.Label2 = New System.Windows.Forms.Label
-    Me.txtDummy1 = New System.Windows.Forms.TextBox
-    Me.txtDummy2 = New System.Windows.Forms.TextBox
-    Me.Label3 = New System.Windows.Forms.Label
-    Me.ttl1 = New ctlTTL
+    Me.Label1 = New System.Windows.Forms.Label()
+    Me.Label2 = New System.Windows.Forms.Label()
+    Me.txtIPv4 = New JHSoftware.SimpleDNS.ctlIP()
+    Me.txtIPv6 = New JHSoftware.SimpleDNS.ctlIP()
+    Me.Label3 = New System.Windows.Forms.Label()
+    Me.ttl1 = New JHSoftware.SimpleDNS.ctlTTL()
     Me.SuspendLayout()
     '
     'Label1
@@ -46,21 +46,27 @@ Partial Class FixedIPUI
     Me.Label2.TabIndex = 2
     Me.Label2.Text = "IPv6 address (DNS AAAA-records):"
     '
-    'txtDummy1
+    'txtIPv4
     '
-    Me.txtDummy1.Location = New System.Drawing.Point(0, 16)
-    Me.txtDummy1.Name = "txtDummy1"
-    Me.txtDummy1.Size = New System.Drawing.Size(100, 20)
-    Me.txtDummy1.TabIndex = 1
-    Me.txtDummy1.Visible = False
+    Me.txtIPv4.AutoSize = True
+    Me.txtIPv4.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink
+    Me.txtIPv4.IPVersion = JHSoftware.SimpleDNS.IPVersionEnum.IPv4
+    Me.txtIPv4.Location = New System.Drawing.Point(0, 16)
+    Me.txtIPv4.Name = "txtIPv4"
+    Me.txtIPv4.Size = New System.Drawing.Size(174, 22)
+    Me.txtIPv4.TabIndex = 1
+    Me.txtIPv4.Value = Nothing
     '
-    'txtDummy2
+    'txtIPv6
     '
-    Me.txtDummy2.Location = New System.Drawing.Point(0, 65)
-    Me.txtDummy2.Name = "txtDummy2"
-    Me.txtDummy2.Size = New System.Drawing.Size(100, 20)
-    Me.txtDummy2.TabIndex = 3
-    Me.txtDummy2.Visible = False
+    Me.txtIPv6.AutoSize = True
+    Me.txtIPv6.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink
+    Me.txtIPv6.IPVersion = JHSoftware.SimpleDNS.IPVersionEnum.IPv6
+    Me.txtIPv6.Location = New System.Drawing.Point(0, 65)
+    Me.txtIPv6.Name = "txtIPv6"
+    Me.txtIPv6.Size = New System.Drawing.Size(281, 22)
+    Me.txtIPv6.TabIndex = 3
+    Me.txtIPv6.Value = Nothing
     '
     'Label3
     '
@@ -84,15 +90,15 @@ Partial Class FixedIPUI
     Me.ttl1.TabIndex = 5
     Me.ttl1.Value = 300
     '
-    'OptionsUI
+    'FixedIPUI
     '
     Me.Controls.Add(Me.ttl1)
     Me.Controls.Add(Me.Label3)
-    Me.Controls.Add(Me.txtDummy2)
-    Me.Controls.Add(Me.txtDummy1)
+    Me.Controls.Add(Me.txtIPv6)
+    Me.Controls.Add(Me.txtIPv4)
     Me.Controls.Add(Me.Label2)
     Me.Controls.Add(Me.Label1)
-    Me.Name = "OptionsUI"
+    Me.Name = "FixedIPUI"
     Me.Size = New System.Drawing.Size(338, 146)
     Me.ResumeLayout(False)
     Me.PerformLayout()
@@ -100,9 +106,9 @@ Partial Class FixedIPUI
   End Sub
   Friend WithEvents Label1 As System.Windows.Forms.Label
   Friend WithEvents Label2 As System.Windows.Forms.Label
-  Friend WithEvents txtDummy1 As System.Windows.Forms.TextBox
-  Friend WithEvents txtDummy2 As System.Windows.Forms.TextBox
+  Friend WithEvents txtIPv4 As JHSoftware.SimpleDNS.ctlIP
+  Friend WithEvents txtIPv6 As JHSoftware.SimpleDNS.ctlIP
   Friend WithEvents Label3 As System.Windows.Forms.Label
-  Friend WithEvents ttl1 As ctlTTL
+  Friend WithEvents ttl1 As JHSoftware.SimpleDNS.ctlTTL
 
 End Class

@@ -1,10 +1,11 @@
-﻿Imports JHSoftware.SimpleDNS.Plugin
+﻿Imports System.Threading.Tasks
+Imports JHSoftware.SimpleDNS.Plugin
 
 Public Class FixedHostPlugIn
   Implements IGetAnswerPlugIn
 
   Dim cfg As MyConfigHost
-  Dim cfgHNDom As JHSoftware.SimpleDNS.Plugin.DomainName
+  Dim cfgHNDom As JHSoftware.SimpleDNS.DomName
 
 #Region "events"
   Public Event LogLine(ByVal text As String) Implements JHSoftware.SimpleDNS.Plugin.IPlugInBase.LogLine
@@ -35,47 +36,37 @@ Public Class FixedHostPlugIn
     With GetPlugInTypeInfo
       .Name = "Fixed Host Name"
       .Description = "Returns a fixed host name"
-      .InfoURL = "http://www.simpledns.com/plugin-fixedhostname"
-      .ConfigFile = False
-      .MultiThreaded = True
+      .InfoURL = "https://simpledns.plus/kb/175/fixed-host-name-plug-in"
     End With
   End Function
 
-  Public Sub LoadConfig(ByVal config As String, ByVal instanceID As Guid, ByVal dataPath As String, ByRef maxThreads As Integer) Implements JHSoftware.SimpleDNS.Plugin.IPlugInBase.LoadConfig
+  Public Sub LoadConfig(config As String, instanceID As Guid, dataPath As String) Implements IPlugInBase.LoadConfig
     cfg = MyConfigHost.Load(config)
-    cfgHNDom = JHSoftware.SimpleDNS.Plugin.DomainName.Parse(cfg.HostName)
+    cfgHNDom = JHSoftware.SimpleDNS.DomName.Parse(cfg.HostName)
   End Sub
-
-  Public Function GetDNSAskAbout() As JHSoftware.SimpleDNS.Plugin.DNSAskAbout Implements JHSoftware.SimpleDNS.Plugin.IGetAnswerPlugIn.GetDNSAskAbout
-    If Not cfg.CNAME Then
-      Dim lst As New List(Of DNSRRType)
-      If cfg.MX Then lst.Add(DNSRRType.Parse("MX"))
-      If cfg.NS Then lst.Add(DNSRRType.Parse("NS"))
-      If cfg.PTR Then lst.Add(DNSRRType.Parse("PTR"))
-      GetDNSAskAbout.RRTypes = lst.ToArray
-    End If
-  End Function
 
   Public Function GetOptionsUI(ByVal instanceID As Guid, ByVal dataPath As String) As JHSoftware.SimpleDNS.Plugin.OptionsUI Implements JHSoftware.SimpleDNS.Plugin.IPlugInBase.GetOptionsUI
     Return New FixedHostUI
   End Function
 
-  Public Function Lookup(ByVal request As JHSoftware.SimpleDNS.Plugin.IDNSRequest) As JHSoftware.SimpleDNS.Plugin.DNSAnswer Implements JHSoftware.SimpleDNS.Plugin.IGetAnswerPlugIn.Lookup
+  Private Function Lookup(request As IDNSRequest) As Task(Of DNSAnswer) Implements IGetAnswerPlugIn.Lookup
     If cfg.CNAME Then
-      If request.QName = cfgHNDom Then Return Nothing
-      Dim rec As New DNSRecord
-      rec.Name = request.QName
-      rec.RRType = 5US 'CNAME
-      rec.Data = cfg.HostName
-      rec.TTL = cfg.TTL
+      If request.QName = cfgHNDom Then Return Task.FromResult(Of DNSAnswer)(Nothing)
+      Dim rec As New DNSRecord With {
+        .Name = request.QName,
+        .RRType = JHSoftware.SimpleDNS.DNSRecType.CNAME,
+        .Data = cfg.HostName,
+        .TTL = cfg.TTL
+      }
       Dim rv As New DNSAnswer
-      rv.Records.Add(rec)
-      Return rv
+      rv.RecordsAnswer.Add(rec)
+      Return Task.FromResult(rv)
     Else
-      Dim rec As New DNSRecord
-      rec.Name = request.QName
-      rec.RRType = request.QType
-      rec.TTL = cfg.TTL
+      Dim rec As New DNSRecord With {
+        .Name = request.QName,
+        .RRType = request.QType,
+        .TTL = cfg.TTL
+      }
       If request.QType = 15US Then
         'MX
         rec.Data = "10 " & cfg.HostName
@@ -84,8 +75,8 @@ Public Class FixedHostPlugIn
         rec.Data = cfg.HostName
       End If
       Dim rv As New DNSAnswer
-      rv.Records.Add(rec)
-      Return rv
+      rv.RecordsAnswer.Add(rec)
+      Return Task.FromResult(rv)
     End If
   End Function
 
