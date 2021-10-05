@@ -7,11 +7,7 @@ Public Class FixedIpPlugIn
 
   Dim cfg As MyConfigIP
 
-#Region "events"
-  Public Event AsyncError(ByVal ex As System.Exception) Implements JHSoftware.SimpleDNS.Plugin.IPlugInBase.AsyncError
-  Public Event LogLine(ByVal text As String) Implements JHSoftware.SimpleDNS.Plugin.IPlugInBase.LogLine
-  Public Event SaveConfig(ByVal config As String) Implements JHSoftware.SimpleDNS.Plugin.IPlugInBase.SaveConfig
-#End Region
+  Public Property Host As IHost Implements IPlugInBase.Host
 
 #Region "not implemented"
 
@@ -26,12 +22,16 @@ Public Class FixedIpPlugIn
     Return ""
   End Function
 
-  Public Sub StartService() Implements JHSoftware.SimpleDNS.Plugin.IPlugInBase.StartService
-  End Sub
-
   Public Sub StopService() Implements JHSoftware.SimpleDNS.Plugin.IPlugInBase.StopService
   End Sub
-#End Region
+
+  Private Function StartService() As Task Implements IPlugInBase.StartService
+    Return Task.CompletedTask
+  End Function
+
+  Public Function Signal(code As Integer, data As Object) As Task(Of Object) Implements IPlugInBase.Signal
+    Return Task.FromResult(Of Object)(Nothing)
+  End Function
 
   Public Function LookupReverse(ip As SdnsIP, req As IDNSRequest) As Task(Of IGetHostPlugIn.Result(Of DomName)) Implements IGetHostPlugIn.LookupReverse
     Return Task.FromResult(Of IGetHostPlugIn.Result(Of DomName))(Nothing)
@@ -40,6 +40,7 @@ Public Class FixedIpPlugIn
   Public Function LookupTXT(req As IDNSRequest) As Task(Of IGetHostPlugIn.Result(Of String)) Implements IGetHostPlugIn.LookupTXT
     Return Task.FromResult(Of IGetHostPlugIn.Result(Of String))(Nothing)
   End Function
+#End Region
 
   Public Function GetPlugInTypeInfo() As JHSoftware.SimpleDNS.Plugin.IPlugInBase.PlugInTypeInfo Implements JHSoftware.SimpleDNS.Plugin.IPlugInBase.GetPlugInTypeInfo
     With GetPlugInTypeInfo
