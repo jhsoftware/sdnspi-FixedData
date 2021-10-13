@@ -3,7 +3,8 @@ Imports JHSoftware.SimpleDNS
 Imports JHSoftware.SimpleDNS.Plugin
 
 Public Class FixedIpPlugIn
-  Implements JHSoftware.SimpleDNS.Plugin.IGetHostPlugIn
+  Implements JHSoftware.SimpleDNS.Plugin.ILookupHost
+  Implements IOptionsUI
 
   Dim cfg As MyConfigIP
 
@@ -29,17 +30,6 @@ Public Class FixedIpPlugIn
     Return Task.CompletedTask
   End Function
 
-  Public Function Signal(code As Integer, data As Object) As Task(Of Object) Implements IPlugInBase.Signal
-    Return Task.FromResult(Of Object)(Nothing)
-  End Function
-
-  Public Function LookupReverse(ip As SdnsIP, req As IDNSRequest) As Task(Of IGetHostPlugIn.Result(Of DomName)) Implements IGetHostPlugIn.LookupReverse
-    Return Task.FromResult(Of IGetHostPlugIn.Result(Of DomName))(Nothing)
-  End Function
-
-  Public Function LookupTXT(req As IDNSRequest) As Task(Of IGetHostPlugIn.Result(Of String)) Implements IGetHostPlugIn.LookupTXT
-    Return Task.FromResult(Of IGetHostPlugIn.Result(Of String))(Nothing)
-  End Function
 #End Region
 
   Public Function GetPlugInTypeInfo() As JHSoftware.SimpleDNS.Plugin.IPlugInBase.PlugInTypeInfo Implements JHSoftware.SimpleDNS.Plugin.IPlugInBase.GetPlugInTypeInfo
@@ -50,16 +40,16 @@ Public Class FixedIpPlugIn
     End With
   End Function
 
-  Public Function Lookup(req As IDNSRequest) As Task(Of IGetHostPlugIn.Result(Of SdnsIP)) Implements IGetHostPlugIn.Lookup
-    If req.QType = DNSRecType.A AndAlso cfg.IPv4 IsNot Nothing Then
-      Return Task.FromResult(New IGetHostPlugIn.Result(Of SdnsIP) With {.Value = cfg.IPv4, .TTL = cfg.TTL})
-    ElseIf req.QType = DNSRecType.AAAA AndAlso cfg.IPv6 IsNot Nothing Then
-      Return Task.FromResult(New IGetHostPlugIn.Result(Of SdnsIP) With {.Value = cfg.IPv6, .TTL = cfg.TTL})
+  Public Function Lookup(name As DomName, ipv6 As Boolean, req As IDNSRequest) As Task(Of LookupResult(Of SdnsIP)) Implements ILookupHost.LookupHost
+    If Not ipv6 AndAlso cfg.IPv4 IsNot Nothing Then
+      Return Task.FromResult(New LookupResult(Of SdnsIP) With {.Value = cfg.IPv4, .TTL = cfg.TTL})
+    ElseIf ipv6 AndAlso cfg.IPv6 IsNot Nothing Then
+      Return Task.FromResult(New LookupResult(Of SdnsIP) With {.Value = cfg.IPv6, .TTL = cfg.TTL})
     End If
-    Return Task.FromResult(Of IGetHostPlugIn.Result(Of SdnsIP))(Nothing)
+    Return Task.FromResult(Of LookupResult(Of SdnsIP))(Nothing)
   End Function
 
-  Public Function GetOptionsUI(instanceID As Guid, dataPath As String) As JHSoftware.SimpleDNS.Plugin.OptionsUI Implements JHSoftware.SimpleDNS.Plugin.IPlugInBase.GetOptionsUI
+  Public Function GetOptionsUI(instanceID As Guid, dataPath As String) As JHSoftware.SimpleDNS.Plugin.OptionsUI Implements JHSoftware.SimpleDNS.Plugin.IOptionsUI.GetOptionsUI
     Return New FixedIPUI
   End Function
 

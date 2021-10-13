@@ -2,7 +2,8 @@
 Imports JHSoftware.SimpleDNS.Plugin
 
 Public Class FixedHostPlugIn
-  Implements IGetAnswerPlugIn
+  Implements ILookupAnswer
+  Implements IOptionsUI
 
   Dim cfg As MyConfigHost
   Dim cfgHNDom As JHSoftware.SimpleDNS.DomName
@@ -28,10 +29,6 @@ Public Class FixedHostPlugIn
     Return Task.CompletedTask
   End Function
 
-  Public Function Signal(code As Integer, data As Object) As Task(Of Object) Implements IPlugInBase.Signal
-    Return Task.FromResult(Of Object)(Nothing)
-  End Function
-
 #End Region
 
   Public Function GetPlugInTypeInfo() As JHSoftware.SimpleDNS.Plugin.IPlugInBase.PlugInTypeInfo Implements JHSoftware.SimpleDNS.Plugin.IPlugInBase.GetPlugInTypeInfo
@@ -47,11 +44,11 @@ Public Class FixedHostPlugIn
     cfgHNDom = JHSoftware.SimpleDNS.DomName.Parse(cfg.HostName)
   End Sub
 
-  Public Function GetOptionsUI(ByVal instanceID As Guid, ByVal dataPath As String) As JHSoftware.SimpleDNS.Plugin.OptionsUI Implements JHSoftware.SimpleDNS.Plugin.IPlugInBase.GetOptionsUI
+  Public Function GetOptionsUI(ByVal instanceID As Guid, ByVal dataPath As String) As JHSoftware.SimpleDNS.Plugin.OptionsUI Implements JHSoftware.SimpleDNS.Plugin.IOptionsUI.GetOptionsUI
     Return New FixedHostUI
   End Function
 
-  Private Function Lookup(request As IDNSRequest) As Task(Of DNSAnswer) Implements IGetAnswerPlugIn.Lookup
+  Private Function Lookup(request As IDNSRequest) As Task(Of DNSAnswer) Implements ILookupAnswer.LookupAnswer
     If cfg.CNAME Then
       If request.QName = cfgHNDom Then Return Task.FromResult(Of DNSAnswer)(Nothing)
       Dim rec As New DNSRecord With {
@@ -61,7 +58,7 @@ Public Class FixedHostPlugIn
         .TTL = cfg.TTL
       }
       Dim rv As New DNSAnswer
-      rv.RecordsAnswer.Add(rec)
+      rv.AddRecord(rec)
       Return Task.FromResult(rv)
     ElseIf (cfg.MX AndAlso request.QType = DNSRecType.MX) OrElse
            (cfg.NS AndAlso request.QType = DNSRecType.NS) OrElse
@@ -79,7 +76,7 @@ Public Class FixedHostPlugIn
         rec.Data = cfg.HostName
       End If
       Dim rv As New DNSAnswer
-      rv.RecordsAnswer.Add(rec)
+      rv.AddRecord(rec)
       Return Task.FromResult(rv)
     Else
       Return Task.FromResult(Of DNSAnswer)(Nothing)
