@@ -32,15 +32,15 @@ Public Class FixedIpPlugIn
 
 #End Region
 
-  Public Function GetPlugInTypeInfo() As JHSoftware.SimpleDNS.Plugin.IPlugInBase.PlugInTypeInfo Implements JHSoftware.SimpleDNS.Plugin.IPlugInBase.GetPlugInTypeInfo
+  Public Function GetPlugInTypeInfo() As JHSoftware.SimpleDNS.Plugin.IPlugInBase.PlugInTypeInfo Implements JHSoftware.SimpleDNS.Plugin.IPlugInBase.GetTypeInfo
     With GetPlugInTypeInfo
       .Name = "Fixed IP Address"
       .Description = "Returns a fixed IP address"
-      .InfoURL = "https://simpledns.plus/kb/176/fixed-ip-address-plug-in"
+      .InfoURL = "https://simpledns.plus/plugin-fixedip"
     End With
   End Function
 
-  Public Function Lookup(name As DomName, ipv6 As Boolean, req As IDNSRequest) As Task(Of LookupResult(Of SdnsIP)) Implements ILookupHost.LookupHost
+  Public Function Lookup(name As DomName, ipv6 As Boolean, req As IRequestContext) As Task(Of LookupResult(Of SdnsIP)) Implements ILookupHost.LookupHost
     If Not ipv6 AndAlso cfg.IPv4 IsNot Nothing Then
       Return Task.FromResult(New LookupResult(Of SdnsIP) With {.Value = cfg.IPv4, .TTL = cfg.TTL})
     ElseIf ipv6 AndAlso cfg.IPv6 IsNot Nothing Then

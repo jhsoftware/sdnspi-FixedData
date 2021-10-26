@@ -31,11 +31,11 @@ Public Class FixedHostPlugIn
 
 #End Region
 
-  Public Function GetPlugInTypeInfo() As JHSoftware.SimpleDNS.Plugin.IPlugInBase.PlugInTypeInfo Implements JHSoftware.SimpleDNS.Plugin.IPlugInBase.GetPlugInTypeInfo
+  Public Function GetPlugInTypeInfo() As JHSoftware.SimpleDNS.Plugin.IPlugInBase.PlugInTypeInfo Implements JHSoftware.SimpleDNS.Plugin.IPlugInBase.GetTypeInfo
     With GetPlugInTypeInfo
       .Name = "Fixed Host Name"
       .Description = "Returns a fixed host name"
-      .InfoURL = "https://simpledns.plus/kb/175/fixed-host-name-plug-in"
+      .InfoURL = "https://simpledns.plus/plugin-fixedhostname"
     End With
   End Function
 
@@ -48,7 +48,7 @@ Public Class FixedHostPlugIn
     Return New FixedHostUI
   End Function
 
-  Private Function Lookup(request As IDNSRequest) As Task(Of DNSAnswer) Implements ILookupAnswer.LookupAnswer
+  Private Function Lookup(request As IRequestContext) As Task(Of DNSAnswer) Implements ILookupAnswer.LookupAnswer
     If cfg.CNAME Then
       If request.QName = cfgHNDom Then Return Task.FromResult(Of DNSAnswer)(Nothing)
       Dim rec As New DNSRecord With {
@@ -58,7 +58,7 @@ Public Class FixedHostPlugIn
         .TTL = cfg.TTL
       }
       Dim rv As New DNSAnswer
-      rv.AddRecord(rec)
+      rv.Answer.Add(rec)
       Return Task.FromResult(rv)
     ElseIf (cfg.MX AndAlso request.QType = DNSRecType.MX) OrElse
            (cfg.NS AndAlso request.QType = DNSRecType.NS) OrElse
@@ -76,7 +76,7 @@ Public Class FixedHostPlugIn
         rec.Data = cfg.HostName
       End If
       Dim rv As New DNSAnswer
-      rv.AddRecord(rec)
+      rv.Answer.Add(rec)
       Return Task.FromResult(rv)
     Else
       Return Task.FromResult(Of DNSAnswer)(Nothing)
