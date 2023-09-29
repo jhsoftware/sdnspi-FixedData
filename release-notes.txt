@@ -1,0 +1,4 @@
+v. 1.0.2.0901 - 2023.09.29
+--------------------------
+- Changed from using ILookupAnswer interface to ILookupRecord (new with Simple DNS Plus v. 9.1.115)
+- New plug-in versioning scheme - major.minor.rev (semantic) + .simplednsplus-version(0901)

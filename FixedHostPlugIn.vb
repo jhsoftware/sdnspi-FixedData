@@ -2,7 +2,7 @@
 Imports JHSoftware.SimpleDNS.Plugin
 
 Public Class FixedHostPlugIn
-  Implements ILookupAnswer
+  Implements ILookupRecord
   Implements IOptionsUI
 
   Dim cfg As MyConfigHost
@@ -41,38 +41,28 @@ Public Class FixedHostPlugIn
     Return New FixedHostUI
   End Function
 
-  Private Function Lookup(request As IRequestContext) As Task(Of DNSAnswer) Implements ILookupAnswer.LookupAnswer
+  Public Function LookupRecord(request As IRequestContext) As Task(Of RecordData) Implements ILookupRecord.LookupRecord
     If cfg.CNAME Then
-      If request.QName = cfgHNDom Then Return Task.FromResult(Of DNSAnswer)(Nothing)
-      Dim rec As New DNSRecord With {
-        .Name = request.QName,
+      If request.QName = cfgHNDom Then Return Task.FromResult(Of RecordData)(Nothing)
+      Return Task.FromResult(New RecordData With {
         .RRType = JHSoftware.SimpleDNS.DNSRecType.CNAME,
         .Data = cfg.HostName,
         .TTL = cfg.TTL
-      }
-      Dim rv As New DNSAnswer
-      rv.Answer.Add(rec)
-      Return Task.FromResult(rv)
+      })
     ElseIf (cfg.MX AndAlso request.QType = DNSRecType.MX) OrElse
            (cfg.NS AndAlso request.QType = DNSRecType.NS) OrElse
            (cfg.PTR AndAlso request.QType = DNSRecType.PTR) Then
-      Dim rec As New DNSRecord With {
-        .Name = request.QName,
-        .RRType = request.QType,
-        .TTL = cfg.TTL
-      }
+      Dim rv As New RecordData With {.RRType = request.QType, .TTL = cfg.TTL}
       If request.QType = DNSRecType.MX Then
         'MX
-        rec.Data = "10 " & cfg.HostName
+        rv.Data = "10 " & cfg.HostName
       Else
         'NS,PTR
-        rec.Data = cfg.HostName
+        rv.Data = cfg.HostName
       End If
-      Dim rv As New DNSAnswer
-      rv.Answer.Add(rec)
       Return Task.FromResult(rv)
     Else
-      Return Task.FromResult(Of DNSAnswer)(Nothing)
+      Return Task.FromResult(Of RecordData)(Nothing)
     End If
   End Function
 
